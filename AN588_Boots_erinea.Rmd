@@ -58,6 +58,11 @@ reps
 Estimate the standard error for each of your β coefficients as the standard deviation of the sampling distribution from your bootstrap and determine the 95% CI for each of your β
  coefficients based on the appropriate quantiles from your sampling distribution.
 
+```{r 5, include=TRUE}
+mI <- lm(bmf1 ~ h1, data = data)
+summary(mI)
+```
+
 How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
 
 How does the latter compare to the 95% CI estimated from your entire dataset?
