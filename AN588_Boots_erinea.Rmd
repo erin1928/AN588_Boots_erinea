@@ -16,19 +16,46 @@ data <- read.csv(Data, header = TRUE, sep = ",", stringsAsFactors = TRUE)
 #call our data set
 head(data)
 ```
+```{r 2, include=TRUE}
+library(ggplot2)
+h <- data$HomeRange_km2
+h1 <- log(h)
+bmf <- data$Body_mass_female_mean
+bmf1 <- log(bmf)
+g <- ggplot(data = data, aes(x = h1, y = bmf1))
+g <- g + geom_point()
+g <- g + geom_smooth(method = "lm", formula = y ~ x)
+```
 
-
-
-
-
-
-
+```{r 3, include=TRUE}
+beta1 <- cor(h, bmf) * (sd(h)/sd(bmf))
+beta1 #slope
+beta0 <- mean(h) - beta1 * mean(bmf)
+beta0 #intercept
+```
+These are giving me NAs I can't quite figure out why
 
 [2] Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the same coefficients. This generates a sampling distribution for each β
  coefficient.
+```{r 4, include=TRUE}
+set.seed(0)
+library(boot)
 
-Estimate the standard error for each of your β
- coefficients as the standard deviation of the sampling distribution from your bootstrap and determine the 95% CI for each of your β
+#define function to calculate fitted regression coefficients
+coef_function <- function(formula, data, indices) {
+  d <- data[indices,] #allows boot to select sample
+  fit <- lm(formula, data = data) #fit regression model
+  return(coef(fit)) #return coefficient estimates of model
+}
+
+#perform bootstrapping with 1000 replications
+reps <- boot(data=data, statistic=coef_function, R=1000, formula=bmf1~h1)
+
+#view results of boostrapping
+reps
+
+```
+Estimate the standard error for each of your β coefficients as the standard deviation of the sampling distribution from your bootstrap and determine the 95% CI for each of your β
  coefficients based on the appropriate quantiles from your sampling distribution.
 
 How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
