@@ -25,15 +25,9 @@ bmf1 <- log(bmf)
 g <- ggplot(data = data, aes(x = h1, y = bmf1))
 g <- g + geom_point()
 g <- g + geom_smooth(method = "lm", formula = y ~ x)
+model <- lm(h1 ~ bmf1)
+summary(model)
 ```
-
-```{r 3, include=TRUE}
-beta1 <- cor(h, bmf) * (sd(h)/sd(bmf))
-beta1 #slope
-beta0 <- mean(h) - beta1 * mean(bmf)
-beta0 #intercept
-```
-These are giving me NAs I can't quite figure out why
 
 [2] Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the same coefficients. This generates a sampling distribution for each β
  coefficient.
