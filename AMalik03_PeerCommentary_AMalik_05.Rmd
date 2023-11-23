@@ -1,0 +1,67 @@
+---
+title: "PeerCommentated Boots HW"
+author: "Allister Malik"
+date: "`r Sys.Date()`"
+output: html_document
+---
+## Peer Commentray
+You did a pretty good job with the first part. My code is very similar to yours for making the linear regression. I like how you set a seed to make your data reproducible to show what you saw when doing it. It seems you got lost in the bootstrapping so might I recommend looking at Module 7 for a basic bootstrapping method(its the one I used to make mine!) using that as a base for this HW assignment's bootstrapping. I think I did mine correctly so feel free to look and ask questions about it. Good luck!
+
+
+[1] Using the “KamilarAndCooperData.csv” dataset, run a linear regression looking at log(HomeRange_km2) in relation to log(Body_mass_female_mean) and report your β
+ coeffiecients (slope and intercept).
+
+```{r 1, include=TRUE}
+library(curl)
+Data <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/KamilarAndCooperData.csv")
+#read our csv
+data <- read.csv(Data, header = TRUE, sep = ",", stringsAsFactors = TRUE)
+#call our data set
+head(data) #AM- This is the same way I did it! I think curling is the best way to get data into R.
+```
+```{r 2, include=TRUE}
+library(ggplot2)
+h <- data$HomeRange_km2 
+h1 <- log(h) #AM- I also saved the log(variable) as an object to make it easier
+bmf <- data$Body_mass_female_mean
+bmf1 <- log(bmf)
+g <- ggplot(data = data, aes(x = h1, y = bmf1))
+g <- g + geom_point()
+g <- g + geom_smooth(method = "lm", formula = y ~ x)
+model <- lm(h1 ~ bmf1) #AM- Recheck this! this is not the same as the previous regression. I think you're flipping your x and y variables
+summary(model)
+#A.M- plotting it is really nice, but you forgot to actually show it/call the visual! Looks amazing! If you'd like, try adding better labels like I did, it's good practice and makes it look better in my opinion, totally not neccessary though.
+g #AM-added it in
+```
+
+[2] Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the same coefficients. This generates a sampling distribution for each β
+ coefficient.
+```{r 4, include=TRUE}
+set.seed(0)
+library(boot)
+
+#define function to calculate fitted regression coefficients
+coef_function <- function(formula, data, indices) {
+  d <- data[indices,] #allows boot to select sample
+  fit <- lm(formula, data = data) #fit regression model
+  return(coef(fit)) #return coefficient estimates of model
+}  #AM-this is a really nice way of getting a bootstrapping function . I did it somewhat the same way but I think your way is more elegant and shorter by using a function
+
+#perform bootstrapping with 1000 replications
+reps <- boot(data=data, statistic=coef_function, R=1000, formula=bmf1~h1)
+
+#view results of boostrapping
+reps #AM- I'm sorry, but I'm not sure how to interpret this data
+```
+Estimate the standard error for each of your β coefficients as the standard deviation of the sampling distribution from your bootstrap and determine the 95% CI for each of your β
+ coefficients based on the appropriate quantiles from your sampling distribution.
+
+```{r 5, include=TRUE}
+mI <- lm(bmf1 ~ h1, data = data) #AM- Looks like you recreated the linear regression for the original (logged) data. The bootstrapping you did seemed to only show some data and not std error. I'd recommend trying another method of bootstrapping.
+summary(mI)
+```
+
+How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
+#AM- It seems like you go stuck here you're welcome to look at my code for some inspiration. Though I'm never sure I'm doing it right.
+How does the latter compare to the 95% CI estimated from your entire dataset?
+
