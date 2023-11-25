@@ -64,7 +64,6 @@ mI <- lm(bmf1 ~ h1, data = data)
 summary(mI)
 ```
 
-How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
 
 ```{r 6, include=TRUE}
 bmf2 <- na.omit(bmf)
@@ -90,5 +89,12 @@ quantile(set)
 ```{r 9, include=TRUE}
 quantile(set, c(0.95))
 ```
-How does the latter compare to the 95% CI estimated from your entire dataset?
 
+
+How does the former compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
+
+The SE estimated from my entire data set using the standard error produces a larger number when compared to the SE estimated implemented in lm().
+
+How does the latter compare to the 95% CI estimated from your entire data set?
+
+The 95% confidence intervals estimated from the entire data set are larger than than the confidence intervals of the sampled data
